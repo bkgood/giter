@@ -133,3 +133,13 @@ func Collect[T, R any](iter Iterator[T], collector Collector[T, R]) R {
 	defer iter.Close()
 	return collector(iter.Each)
 }
+
+func Fold[T, R any](iter Iterator[T], initial R, f func(next T, current R) R) R {
+	defer iter.Close()
+
+	for x := range iter.Each {
+		initial = f(x, initial)
+	}
+
+	return initial
+}
