@@ -155,3 +155,26 @@ func TestToMap(t *testing.T) {
 		t.Errorf("TestToMap: out = %v, want %v", out, want)
 	}
 }
+
+func TestCollectToMap(t *testing.T) {
+	want, _, _, pairs := testMap()
+
+	out := Collect(Slice(pairs), MapCollector[string, int]())
+
+	if !reflect.DeepEqual(want, out) {
+		t.Errorf("TestCollectToMap: out = %v, want %v", out, want)
+	}
+}
+
+func TestCollectToSlice(t *testing.T) {
+	xs := []int{1, 2, 3, 4, 5}
+
+	want := make([]int, len(xs))
+	copy(want, xs)
+
+	out := Collect(Slice(xs), SliceCollector[int]())
+
+	if !reflect.DeepEqual(want, out) {
+		t.Errorf("TestCollectToSlice: out = %v, want %v", out, want)
+	}
+}
