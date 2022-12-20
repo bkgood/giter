@@ -98,25 +98,11 @@ func Concat[T any](iters ...Iterator[T]) Iterator[T] {
 }
 
 func ToSlice[T any](iter Iterator[T]) []T {
-	out := []T{}
-
-	defer iter.Close()
-	for x := range iter.Each {
-		out = append(out, x)
-	}
-
-	return out
+	return Collect(iter, SliceCollector[T]())
 }
 
 func ToMap[K comparable, V any](iter Iterator[KVPair[K, V]]) map[K]V {
-	out := map[K]V{}
-
-	defer iter.Close()
-	for x := range iter.Each {
-		out[x.Key] = x.Value
-	}
-
-	return out
+	return Collect(iter, MapCollector[K, V]())
 }
 
 type Collector[T, R any] struct {
