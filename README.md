@@ -7,3 +7,31 @@ there is a non-zero chance that:
 1. this is very non-idiomatic Go.
 
 I'm ok with both.
+
+this whole exercise is somewhat poisoned by how verbose and without-inference go's function literal
+syntax is ╮ (. ❛ ᴗ ❛.) ╭
+
+## things i vaguely want to do
+
+### add docs
+
+i'm still getting used to writing godoc stuff; this would be decent practice.
+
+### sort out if I can have sized iterators next to unsized ones
+
+if i can see a size, I can preallocate in collection.
+
+### other functions
+
+#### natatime
+trivially process n things from the iterator at a time.
+
+#### flatmap
+i'm very unconvinced that i want to implement this but maybe.
+
+#### some/has
+"has anything matching predicate"
+
+#### first/last
+
+just give me the first or last thing (maybe even accept an n, to give top/bottom n).
