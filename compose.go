@@ -42,7 +42,7 @@ func Zip[T any](iters ...Iterator[T]) Iterator[T] {
 				defer i.Close()
 			}
 
-			buf := make([]T, len(iters))
+			buf := make([]T, 0, len(iters))
 
 			for {
 				for len(buf) < len(iters) {
@@ -74,6 +74,7 @@ func Zip[T any](iters ...Iterator[T]) Iterator[T] {
 func Merge[T any](iters ...Iterator[T]) Iterator[T] {
 	return Make(
 		func(out chan<- T, stopChan <-chan interface{}) {
+			// TODO
 		})
 }
 
@@ -102,6 +103,17 @@ func ToSlice[T any](iter Iterator[T]) []T {
 	defer iter.Close()
 	for x := range iter.Each {
 		out = append(out, x)
+	}
+
+	return out
+}
+
+func ToMap[K comparable, V any](iter Iterator[KVPair[K, V]]) map[K]V {
+	out := map[K]V{}
+
+	defer iter.Close()
+	for x := range iter.Each {
+		out[x.Key] = x.Value
 	}
 
 	return out
