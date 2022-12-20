@@ -117,10 +117,15 @@ func TestMapPairs(t *testing.T) {
 		out = append(out, x)
 	}
 
-	less := func(xs []KVPair[string, int]) func(a, b int) bool {
+	less := func(xs []KVPair[string, int]) func(int, int) bool {
 		return func(a, b int) bool {
 			i, j := xs[a], xs[b]
-			return i.Key < j.Key || i.Value < j.Value
+
+			if i.Key != j.Key {
+				return i.Key < j.Key
+			}
+
+			return i.Value < j.Value
 		}
 	}
 
