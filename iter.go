@@ -1,11 +1,33 @@
 package giter
 
-import "github.com/bkgood/giter/internal"
-
-type Iterator[T any] internal.Iterator[T]
+type Iterator[T any] struct {
+	Each  <-chan T
+	Close func()
+}
 
 func Make[T any](impl func(chan<- T, <-chan interface{})) (i Iterator[T]) {
-	return Iterator[T](internal.Make(impl))
+	values := make(chan T)
+
+	stop, stopChan := func() (func(), <-chan interface{}) {
+		bidiStopChan := make(chan interface{})
+		stopChan := bidiStopChan
+
+		stop := func() {
+			select {
+			case bidiStopChan <- nil:
+			default:
+			}
+		}
+
+		return stop, stopChan
+	}()
+
+	go func() {
+		impl(values, stopChan)
+		close(values)
+	}()
+
+	return Iterator[T]{Each: values, Close: stop}
 }
 
 func Slice[T any](xs []T) (i Iterator[T]) {
