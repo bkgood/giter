@@ -60,17 +60,6 @@ if i can see a size, I can preallocate in collection.
 
 ### other functions
 
-#### natatime
-trivially process n things from the iterator at a time.
-
-there is a variety of this that does
-
-    Iterator[T] -> Iterator[[]T]
-
-for some given output size, and then one can `FlatMap` it back into `Iterator[R any]`, but this does
-allocate a bunch of (probably small) extra slices that could be trivially avoided with something
-like a `MapChunked[T, R any](uint, f([]T) -> []R` with the sacrifice of a bit more code.
-
 #### reverse ranges
 
 ranges only ascend now. they should be able to descend.

@@ -79,3 +79,30 @@ func TestChunk(t *testing.T) {
 		t.Errorf("TestChunk: Chunk(2, {1..=5}) = %v, want = %v", out, want)
 	}
 }
+
+func TestChunkedFlatMap(t *testing.T) {
+	xs := []int{1, 2, 3, 4, 5}
+	want := make([]int, 0, len(xs))
+
+	for _, x := range xs {
+		want = append(want, 2*x)
+	}
+
+	out := ToSlice(
+		ChunkedFlatMap(
+			2,
+			func(in, out []int) []int {
+				for _, x := range in {
+					out = append(out, 2*x)
+				}
+
+				return out
+			},
+			Slice(xs)))
+
+	if !reflect.DeepEqual(out, want) {
+		t.Errorf(
+			"TestChunkedFlatMap: ChunkedFlatMap(2, 2*x, {1..=5}) = %v, want = %v",
+			out, want)
+	}
+}
