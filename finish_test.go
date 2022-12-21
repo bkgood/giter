@@ -137,3 +137,18 @@ func TestLast(t *testing.T) {
 		t.Errorf("TestLast: Last(Filter(xs, x %% 2 == 0)) = %v, want = %v", nilify(out, want)...)
 	}
 }
+
+func TestAny(t *testing.T) {
+	xs := []int{1, 2, 3, 4, 5}
+
+	smol := func(x int) bool { return x < 10 }
+	hueg := func(x int) bool { return x > 9000 }
+
+	if !Any(smol, Slice(xs)) {
+		t.Errorf("TestAny: Any(smol, xs) is false, should be true")
+	}
+
+	if Any(hueg, Slice(xs)) {
+		t.Errorf("TestAny: Any(hueg, xs) is true, should be false")
+	}
+}

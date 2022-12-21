@@ -67,3 +67,25 @@ func Last[T any](iter Iterator[T]) *T {
 
 	return out
 }
+
+// i should choose one of these :/
+
+func Some[T any](pred func(T) bool, iter Iterator[T]) bool {
+	return Any(pred, iter)
+}
+
+func Has[T any](pred func(T) bool, iter Iterator[T]) bool {
+	return Any(pred, iter)
+}
+
+func Any[T any](pred func(T) bool, iter Iterator[T]) bool {
+	defer iter.Close()
+
+	for x := range iter.Each {
+		if pred(x) {
+			return true
+		}
+	}
+
+	return false
+}

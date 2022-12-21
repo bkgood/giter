@@ -71,11 +71,6 @@ for some given output size, and then one can `FlatMap` it back into `Iterator[R 
 allocate a bunch of (probably small) extra slices that could be trivially avoided with something
 like a `MapChunked[T, R any](uint, f([]T) -> []R` with the sacrifice of a bit more code.
 
-#### some/has
-"has anything matching predicate"
-
-trivially implemented with filter+first and a nil check but i don't really want to do that.
-
 ## isn't this slow?
 
 probably? i wouldn't try to write a blas implementation with it. but for typical webby
