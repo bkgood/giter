@@ -1,4 +1,8 @@
 # giter
+
+![did i break the build/tests?](https://github.com/bkgood/giter/actions/workflows/ci.yml/badge.svg)
+[![Go Reference](https://pkg.go.dev/badge/github.com/bkgood/giter.svg)](https://pkg.go.dev/github.com/bkgood/giter)
+
 i wanted to pass a function an iterator over a map's keys and now I have this.
 
 there is a non-zero chance that:
