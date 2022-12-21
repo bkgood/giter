@@ -29,10 +29,6 @@ trivially process n things from the iterator at a time.
 #### some/has
 "has anything matching predicate"
 
-#### first/last
-
-just give me the first or last thing (maybe even accept an n, to give top/bottom n).
-
 #### get rid of awkward infix-style calls
 
 go doesn't let me have generic method calls, so i have to use normal functions and can't have a nice

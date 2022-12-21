@@ -46,3 +46,24 @@ func Fold[T, R any](iter Iterator[T], initial R, f func(next T, current R) R) R 
 
 	return initial
 }
+
+func First[T any](iter Iterator[T]) *T {
+	defer iter.Close()
+
+	for x := range iter.Each {
+		return &x
+	}
+
+	return nil
+}
+
+func Last[T any](iter Iterator[T]) *T {
+	defer iter.Close()
+
+	var out *T
+	for x := range iter.Each {
+		out = &x
+	}
+
+	return out
+}

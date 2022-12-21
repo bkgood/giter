@@ -79,3 +79,61 @@ func TestSliceFold(t *testing.T) {
 		t.Errorf("TestSliceFold: out = %v, want %v", out, want)
 	}
 }
+
+func TestFirst(t *testing.T) {
+	xs := []int{1, 2, 3, 4, 5}
+	var want *int
+
+	f := func(x int) bool { return x%2 == 0 }
+	for _, x := range xs {
+		if f(x) {
+			want = &x
+			break
+		}
+	}
+
+	out := First(Filter(Slice(xs), f))
+
+	if !reflect.DeepEqual(out, want) {
+		t.Errorf("TestFirst: First(Filter(xs, x %% 2 == 0)) = %v, want = %v", out, want)
+	}
+}
+
+func ptrTargetEquals[T comparable](x, y *T) bool {
+	if (x == nil) != (y == nil) {
+		return false
+	}
+
+	return x == nil || *x == *y
+}
+
+func TestLast(t *testing.T) {
+	xs := []int{1, 2, 3, 4, 5}
+	var want *int
+
+	f := func(x int) bool { return x%2 == 0 }
+	for _, x := range xs {
+		x := x
+		if f(x) {
+			want = &x
+		}
+	}
+
+	out := Last(Filter(Slice(xs), f))
+
+	if !ptrTargetEquals(out, want) {
+		nilify := func(xs ...*int) []interface{} {
+			out := make([]interface{}, len(xs))
+			for i, x := range xs {
+				if x == nil {
+					out[i] = "nil"
+				} else {
+					out[i] = *x
+				}
+			}
+			return out
+		}
+
+		t.Errorf("TestLast: Last(Filter(xs, x %% 2 == 0)) = %v, want = %v", nilify(out, want)...)
+	}
+}
