@@ -84,3 +84,5 @@ offer that.
 
 probably? i wouldn't try to write a blas implementation with it. but for typical webby
 line-of-business type stuff, it is predictably slow, and behaves the same for large and small n.
+
+but if someone did write a blas implementation with this i would be amused.
