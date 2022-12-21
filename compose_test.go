@@ -14,7 +14,7 @@ func TestMap(t *testing.T) {
 		want = append(want, f(x))
 	}
 
-	mapped := Map(Slice(xs), f)
+	mapped := Map(f, Slice(xs))
 	defer mapped.Close()
 	out := []int{}
 	for x := range mapped.Each {
@@ -22,7 +22,7 @@ func TestMap(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(out, want) {
-		t.Errorf("TestMap: Map(xs, 2*x) = %v, want = %v", out, want)
+		t.Errorf("TestMap: Map(2*x, xs) = %v, want = %v", out, want)
 	}
 }
 
@@ -37,7 +37,7 @@ func TestFilter(t *testing.T) {
 		}
 	}
 
-	mapped := Filter(Slice(xs), f)
+	mapped := Filter(f, Slice(xs))
 	defer mapped.Close()
 	out := []int{}
 	for x := range mapped.Each {
@@ -45,7 +45,7 @@ func TestFilter(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(out, want) {
-		t.Errorf("TestFilter: Map(xs, !x%%2) = %v, want = %v", out, want)
+		t.Errorf("TestFilter: Map(!x%%2, xs) = %v, want = %v", out, want)
 	}
 }
 
@@ -62,7 +62,7 @@ func TestChained(t *testing.T) {
 		}
 	}
 
-	mapped := Map(Filter(Slice(xs), f), g)
+	mapped := Map(g, Filter(f, Slice(xs)))
 
 	defer mapped.Close()
 	out := []int{}
@@ -71,7 +71,7 @@ func TestChained(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(out, want) {
-		t.Errorf("TestChained: Map(Filter(xs, !x%%2), 2*x) = %v, want = %v", out, want)
+		t.Errorf("TestChained: Map(2*x, Filter(!x%%2, xs)) = %v, want = %v", out, want)
 	}
 }
 
@@ -142,9 +142,9 @@ func TestFlatMap(t *testing.T) {
 		want = append(want, f(x)...)
 	}
 
-	out := ToSlice(FlatMap(Slice(xs), f))
+	out := ToSlice(FlatMap(f, Slice(xs)))
 
 	if !reflect.DeepEqual(out, want) {
-		t.Errorf("TestFlatMap: FlatMap(xs, x -> [ x, x / 2 ]) = %v, want = %v", out, want)
+		t.Errorf("TestFlatMap: FlatMap(x -> [ x, x / 2 ], xs) = %v, want = %v", out, want)
 	}
 }

@@ -1,8 +1,6 @@
 package giter
 
-// XXX it would be nice to make these methods but you can't have type params on methods.
-
-func Map[T, TP any](iter Iterator[T], f func(T) TP) Iterator[TP] {
+func Map[T, TP any](f func(T) TP, iter Iterator[T]) Iterator[TP] {
 	return Make(
 		func(out chan<- TP, stopChan <-chan interface{}) {
 			defer iter.Close()
@@ -16,7 +14,7 @@ func Map[T, TP any](iter Iterator[T], f func(T) TP) Iterator[TP] {
 		})
 }
 
-func Filter[T any](iter Iterator[T], f func(T) bool) Iterator[T] {
+func Filter[T any](f func(T) bool, iter Iterator[T]) Iterator[T] {
 	return Make(
 		func(out chan<- T, stopChan <-chan interface{}) {
 			defer iter.Close()
@@ -97,7 +95,7 @@ func Concat[T any](iters ...Iterator[T]) Iterator[T] {
 		})
 }
 
-func FlatMap[T, R any](iter Iterator[T], f func(T) []R) Iterator[R] {
+func FlatMap[T, R any](f func(T) []R, iter Iterator[T]) Iterator[R] {
 	return Make(
 		func(out chan<- R, stopChan <-chan interface{}) {
 			defer iter.Close()

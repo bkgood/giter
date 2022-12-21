@@ -31,7 +31,7 @@ func TestToMap(t *testing.T) {
 func TestCollectToMap(t *testing.T) {
 	want, _, _, pairs := testMap()
 
-	out := Collect(Slice(pairs), MapCollector[string, int]())
+	out := Collect(MapCollector[string, int](), Slice(pairs))
 
 	if !reflect.DeepEqual(want, out) {
 		t.Errorf("TestCollectToMap: out = %v, want %v", out, want)
@@ -44,7 +44,7 @@ func TestCollectToSlice(t *testing.T) {
 	want := make([]int, len(xs))
 	copy(want, xs)
 
-	out := Collect(Slice(xs), SliceCollector[int]())
+	out := Collect(SliceCollector[int](), Slice(xs))
 
 	if !reflect.DeepEqual(want, out) {
 		t.Errorf("TestCollectToSlice: out = %v, want %v", out, want)
@@ -60,7 +60,7 @@ func TestScalarFold(t *testing.T) {
 		want += x
 	}
 
-	out := Fold(Slice(xs), 0, func(x, cur int) int { return cur + x })
+	out := Fold(0, func(x, cur int) int { return cur + x }, Slice(xs))
 
 	if want != out {
 		t.Errorf("TestScalarFold: out = %v, want %v", out, want)
@@ -73,7 +73,7 @@ func TestSliceFold(t *testing.T) {
 	want := make([]int, len(xs))
 	copy(want, xs)
 
-	out := Fold(Slice(xs), []int{}, func(x int, cur []int) []int { return append(cur, x) })
+	out := Fold([]int{}, func(x int, cur []int) []int { return append(cur, x) }, Slice(xs))
 
 	if !reflect.DeepEqual(want, out) {
 		t.Errorf("TestSliceFold: out = %v, want %v", out, want)
@@ -92,7 +92,7 @@ func TestFirst(t *testing.T) {
 		}
 	}
 
-	out := First(Filter(Slice(xs), f))
+	out := First(Filter(f, Slice(xs)))
 
 	if !reflect.DeepEqual(out, want) {
 		t.Errorf("TestFirst: First(Filter(xs, x %% 2 == 0)) = %v, want = %v", out, want)
@@ -119,7 +119,7 @@ func TestLast(t *testing.T) {
 		}
 	}
 
-	out := Last(Filter(Slice(xs), f))
+	out := Last(Filter(f, Slice(xs)))
 
 	if !ptrTargetEquals(out, want) {
 		nilify := func(xs ...*int) []interface{} {

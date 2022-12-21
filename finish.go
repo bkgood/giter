@@ -1,11 +1,11 @@
 package giter
 
 func ToSlice[T any](iter Iterator[T]) []T {
-	return Collect(iter, SliceCollector[T]())
+	return Collect(SliceCollector[T](), iter)
 }
 
 func ToMap[K comparable, V any](iter Iterator[KVPair[K, V]]) map[K]V {
-	return Collect(iter, MapCollector[K, V]())
+	return Collect(MapCollector[K, V](), iter)
 }
 
 type Collector[T, R any] func(<-chan T) R
@@ -32,12 +32,12 @@ func SliceCollector[V any]() Collector[V, []V] {
 	}
 }
 
-func Collect[T, R any](iter Iterator[T], collector Collector[T, R]) R {
+func Collect[T, R any](collector Collector[T, R], iter Iterator[T]) R {
 	defer iter.Close()
 	return collector(iter.Each)
 }
 
-func Fold[T, R any](iter Iterator[T], initial R, f func(next T, current R) R) R {
+func Fold[T, R any](initial R, f func(next T, current R) R, iter Iterator[T]) R {
 	defer iter.Close()
 
 	for x := range iter.Each {

@@ -1,12 +1,12 @@
 package giter
 
 func Sum[T int | int32 | int64 | float32 | float64](iter Iterator[T]) T {
-	return Fold(iter, 0, func(x, y T) T { return x + y })
+	return Fold(0, func(x, y T) T { return x + y }, iter)
 }
 
 // XXX gived 1 on empty. i am ok with this.
 func Prod[T int | int32 | int64 | float32 | float64](iter Iterator[T]) T {
-	return Fold(iter, 1, func(x, y T) T { return x * y })
+	return Fold(1, func(x, y T) T { return x * y }, iter)
 }
 
 func Range[T int | int32 | int64 | float32 | float64](from, until T) Iterator[T] {
