@@ -143,3 +143,21 @@ func Fold[T, R any](iter Iterator[T], initial R, f func(next T, current R) R) R 
 
 	return initial
 }
+
+func FlatMap[T, R any](iter Iterator[T], f func(T) []R) Iterator[R] {
+	return Make(
+		func(out chan<- R, stopChan <-chan interface{}) {
+			defer iter.Close()
+			for v := range iter.Each {
+				mapped := f(v)
+
+				for _, v := range mapped {
+					select {
+					case out <- v:
+					case <-stopChan:
+						return
+					}
+				}
+			}
+		})
+}

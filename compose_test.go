@@ -207,3 +207,19 @@ func TestSliceFold(t *testing.T) {
 		t.Errorf("TestSliceFold: out = %v, want %v", out, want)
 	}
 }
+
+func TestFlatMap(t *testing.T) {
+	xs := []int{1, 2, 3, 4, 5}
+	want := make([]int, 0, len(xs))
+
+	f := func(x int) []int { return []int{x, x / 2} }
+	for _, x := range xs {
+		want = append(want, f(x)...)
+	}
+
+	out := ToSlice(FlatMap(Slice(xs), f))
+
+	if !reflect.DeepEqual(out, want) {
+		t.Errorf("TestFlatMap: FlatMap(xs, x -> [ x, x / 2 ]) = %v, want = %v", out, want)
+	}
+}

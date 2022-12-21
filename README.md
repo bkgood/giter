@@ -26,9 +26,6 @@ if i can see a size, I can preallocate in collection.
 #### natatime
 trivially process n things from the iterator at a time.
 
-#### flatmap
-i'm very unconvinced that i want to implement this but maybe.
-
 #### some/has
 "has anything matching predicate"
 
