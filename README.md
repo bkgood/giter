@@ -11,6 +11,30 @@ I'm ok with both.
 this whole exercise is somewhat poisoned by how verbose and without-inference go's function literal
 syntax is ╮ (. ❛ ᴗ ❛.) ╭
 
+## usage
+
+```go
+import (
+	i "github.com/bkgood/giter"
+)
+
+	// sum the even numbers in [0, 100)
+	_ = i.Sum(i.Filter(func(x int) bool { return x%2 == 0 }, i.Range[int](0, 100)))
+
+	// build an index of some structs by an id
+	type foo struct {
+		id   int
+		name string
+	}
+
+	_ = i.Collect(
+		i.MapCollector[int, foo](),
+		i.Map(
+			func(f foo) i.KVPair[int, foo] {
+				return i.KVPair[int, foo]{f.id, f}
+			}, i.Slice([]foo{foo{1, "hi"}})))
+```
+
 ## things i vaguely want to do
 
 ### add docs
