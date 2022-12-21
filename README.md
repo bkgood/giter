@@ -75,3 +75,8 @@ like a `MapChunked[T, R any](uint, f([]T) -> []R` with the sacrifice of a bit mo
 "has anything matching predicate"
 
 trivially implemented with filter+first and a nil check but i don't really want to do that.
+
+## isn't this slow?
+
+probably? i wouldn't try to write a blas implementation with it. but for typical webby
+line-of-business type stuff, it is predictably slow, and behaves the same for large and small n.
