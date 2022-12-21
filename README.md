@@ -14,12 +14,20 @@ syntax is ╮ (. ❛ ᴗ ❛.) ╭
 ## usage
 
 ```go
+package main
+
 import (
+	"fmt"
+
 	i "github.com/bkgood/giter"
 )
 
+func main() {
 	// sum the even numbers in [0, 100)
-	_ = i.Sum(i.Filter(func(x int) bool { return x%2 == 0 }, i.Range[int](0, 100)))
+	x := i.Sum(i.Filter(func(x int) bool { return x%2 == 0 }, i.Range[int](0, 100)))
+
+	// 2450
+	fmt.Println(x)
 
 	// build an index of some structs by an id
 	type foo struct {
@@ -27,12 +35,17 @@ import (
 		name string
 	}
 
-	_ = i.Collect(
+	index := i.Collect( // or just ToMap
 		i.MapCollector[int, foo](),
 		i.Map(
 			func(f foo) i.KVPair[int, foo] {
 				return i.KVPair[int, foo]{f.id, f}
-			}, i.Slice([]foo{foo{1, "hi"}})))
+			},
+			i.Slice([]foo{foo{1, "willy"}})))
+
+	// map[1:{1 willy}]
+	fmt.Println(index)
+}
 ```
 
 ## things i vaguely want to do
