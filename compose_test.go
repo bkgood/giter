@@ -148,3 +148,18 @@ func TestFlatMap(t *testing.T) {
 		t.Errorf("TestFlatMap: FlatMap(x -> [ x, x / 2 ], xs) = %v, want = %v", out, want)
 	}
 }
+
+func TestChunk(t *testing.T) {
+	xs := []int{1, 2, 3, 4, 5}
+	want := [][]int{
+		[]int{xs[0], xs[1]},
+		[]int{xs[2], xs[3]},
+		[]int{xs[4]},
+	}
+
+	out := ToSlice(Chunk(2, Slice(xs)))
+
+	if !reflect.DeepEqual(out, want) {
+		t.Errorf("TestChunk: Chunk(2, {1..=5}) = %v, want = %v", out, want)
+	}
+}

@@ -26,5 +26,15 @@ if i can see a size, I can preallocate in collection.
 #### natatime
 trivially process n things from the iterator at a time.
 
+there is a variety of this that does
+
+    Iterator[T] -> Iterator[[]T]
+
+for some given output size, and then one can `FlatMap` it back into `Iterator[R any]`, but this does
+allocate a bunch of (probably small) extra slices that could be trivially avoided with something
+like a `MapChunked[T, R any](uint, f([]T) -> []R` with the sacrifice of a bit more code.
+
 #### some/has
 "has anything matching predicate"
+
+trivially implemented with filter+first and a nil check but i don't really want to do that.
