@@ -65,3 +65,14 @@ func MapPairs[K comparable, V any](m map[K]V) (i Iterator[KVPair[K, V]]) {
 			}
 		})
 }
+
+func One[V any](x V) Iterator[V] {
+	return Make(
+		func(values chan<- V, stopChan <-chan interface{}) {
+			select {
+			case values <- x:
+			case <-stopChan:
+				return
+			}
+		})
+}

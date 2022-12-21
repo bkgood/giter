@@ -136,3 +136,21 @@ func TestMapPairs(t *testing.T) {
 		t.Errorf("TestMapPairs: out = %v, want %v", out, want)
 	}
 }
+
+func TestOne(t *testing.T) {
+	x := 1337
+	want := []int{x}
+
+	iter := One(x)
+	defer iter.Close()
+
+	out := []int{}
+
+	for x := range iter.Each {
+		out = append(out, x)
+	}
+
+	if !reflect.DeepEqual(want, out) {
+		t.Errorf("TestOne: out = %v, want %v", out, want)
+	}
+}
