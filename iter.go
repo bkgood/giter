@@ -99,7 +99,7 @@ func NeverShrink(_, _ int) bool { return false }
 // released before all values are emitted. shrink receives the current len (remaining) and cap of
 // the slice and can return true to trigger shrinking.
 //
-// A convenience strink indicator function NeverShrink is provided to disable shrinking.
+// A convenience shrink indicator function NeverShrink is provided to disable shrinking.
 func ConsumeSlice[T any](shrink func(l, c int) bool, xs []T) (i Iterator[T]) {
 	return Make(
 		func(values chan<- T, stopChan <-chan interface{}) {
