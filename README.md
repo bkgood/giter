@@ -13,7 +13,7 @@ there is a non-zero chance that:
 I'm ok with both.
 
 this whole exercise is somewhat poisoned by how verbose and without-inference go's function literal
-syntax is ╮ (. ❛ ᴗ ❛.) ╭
+syntax is ╮ (. ❛ ᴗ ❛.) ╭
 
 ## usage
 
