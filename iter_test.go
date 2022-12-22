@@ -26,6 +26,35 @@ func TestSlice(t *testing.T) {
 	}
 }
 
+func TestConsumeSlice(t *testing.T) {
+	xs := []int{1, 2, 3, 4, 5}
+
+	want := make([]int, len(xs))
+	copy(want, xs)
+
+	// I don't have any way to confirm shrinking is happening atm; I can only tell it to shrink
+	// and verify things don't bug out on our example input.
+	iter := ConsumeSlice(func(l, c int) bool { return true }, xs)
+
+	out := []int{}
+
+	defer iter.Close()
+	for x := range iter.Each {
+		out = append(out, x)
+	}
+
+	for i, x := range xs {
+		if x != 0 {
+			// we should zero every element we emit
+			t.Errorf("TestConsumeSlice: xs[%v] = %v, want %v sigh %v", i, x, 0, xs)
+		}
+	}
+
+	if !reflect.DeepEqual(want, out) {
+		t.Errorf("TestConsumeSlice: out = %v, want %v", out, want)
+	}
+}
+
 func TestStop(t *testing.T) {
 	xs := []int{1, 2, 3, 4, 5}
 	want := []int{xs[0]}

@@ -85,6 +85,63 @@ func Slice[T any](xs []T) (i Iterator[T]) {
 		})
 }
 
+// NeverShrink can be used to indicate to ConsumeSlice to never shrink the slice it's consuming.
+func NeverShrink(_, _ int) bool { return false }
+
+// ConsumeSlice produces an iterator emitting the values of a slice, consuming the values of the
+// slice as they are emitted.
+//
+// Values in the source slice are overwritten with zero when they are emitted, so any pointers
+// within are released.
+//
+// The slice can be optionally shrunk (a smaller slice is allocated, the remaining elements are
+// copied into it and the old, larger slice is released) if the source slice itself needs to be
+// released before all values are emitted. shrink receives the current len (remaining) and cap of
+// the slice and can return true to trigger shrinking.
+//
+// A convenience strink indicator function NeverShrink is provided to disable shrinking.
+func ConsumeSlice[T any](shrink func(l, c int) bool, xs []T) (i Iterator[T]) {
+	return Make(
+		func(values chan<- T, stopChan <-chan interface{}) {
+			var zero T
+			defer clear(&xs)
+
+		READ_XS:
+			for {
+				for i, x := range xs {
+					xs[i] = zero // zero out any pointers
+
+					select {
+					case values <- x:
+					case <-stopChan:
+						return
+					}
+
+					// don't bother making an slice of cap 0 in the last
+					// iteration.
+					if i < len(xs)-1 && shrink(len(xs)-i-1, cap(xs)) {
+						xs = xs[i+1:]
+
+						prime := make([]T, len(xs))
+
+						copy(prime, xs)
+
+						clear(&xs)
+
+						xs = prime
+
+						// need to restart range so that we release xs and
+						// our indexing makes sense.
+						continue READ_XS
+					}
+				}
+
+				// we made it to the end of the range, thus we consumed everything.
+				break
+			}
+		})
+}
+
 // MapKeys returns an iterator that emits the keys of a given map.
 func MapKeys[K comparable, V any](m map[K]V) (i Iterator[K]) {
 	return Make(
