@@ -90,6 +90,8 @@ func Merge[T any](iters ...Iterator[T]) Iterator[T] {
 		})
 }
 
+// Concat emits all the values of each the given iterators, one iterator after another (i.e. first
+// the elements of the first one, then the second, and so on).
 func Concat[T any](iters ...Iterator[T]) Iterator[T] {
 	return Make(
 		func(out chan<- T, stopChan <-chan interface{}) {
