@@ -26,8 +26,21 @@ package giter
 //	for _ := range iter.Each {
 //	}
 type Iterator[T any] struct {
-	Each  <-chan T
-	Close func()
+	Each <-chan T
+
+	// stopChan is used to coordinate stopping of the Each producer goroutine: Close() sends
+	// a message on the channel, which the Each producer takes to mean it should stop producing
+	// and exit.
+	stopChan chan<- interface{}
+}
+
+// Close stops production to Each and releases goroutines and any other resources held for producing
+// to this Iterator.
+func (iter *Iterator[T]) Close() {
+	select {
+	case iter.stopChan <- nil:
+	default:
+	}
 }
 
 // Make creates an Iterator via a given function that produces values.
@@ -45,26 +58,17 @@ type Iterator[T any] struct {
 func Make[T any](impl func(chan<- T, <-chan interface{})) (i Iterator[T]) {
 	values := make(chan T)
 
-	stop, stopChan := func() (func(), <-chan interface{}) {
-		bidiStopChan := make(chan interface{})
-		stopChan := bidiStopChan
-
-		stop := func() {
-			select {
-			case bidiStopChan <- nil:
-			default:
-			}
-		}
-
-		return stop, stopChan
-	}()
+	stopChan := make(chan interface{})
 
 	go func() {
 		impl(values, stopChan)
 		close(values)
 	}()
 
-	return Iterator[T]{Each: values, Close: stop}
+	return Iterator[T]{
+		Each:     values,
+		stopChan: stopChan,
+	}
 }
 
 // Slice creates an iterator that emits the values of a given slice.
