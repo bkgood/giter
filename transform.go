@@ -1,5 +1,7 @@
 package giter
 
+// Map returns an Iterator emitting the values of the given Iterator transformed by the given
+// function.
 func Map[T, TP any](f func(T) TP, iter Iterator[T]) Iterator[TP] {
 	return Make(
 		func(out chan<- TP, stopChan <-chan interface{}) {
@@ -14,12 +16,14 @@ func Map[T, TP any](f func(T) TP, iter Iterator[T]) Iterator[TP] {
 		})
 }
 
-func Filter[T any](f func(T) bool, iter Iterator[T]) Iterator[T] {
+// Filter returns an Iterator emitting the values of the given Iterator which match the given
+// predicate.
+func Filter[T any](pred func(T) bool, iter Iterator[T]) Iterator[T] {
 	return Make(
 		func(out chan<- T, stopChan <-chan interface{}) {
 			defer iter.Close()
 			for v := range iter.Each {
-				if f(v) {
+				if pred(v) {
 					select {
 					case out <- v:
 					case <-stopChan:
@@ -30,6 +34,8 @@ func Filter[T any](f func(T) bool, iter Iterator[T]) Iterator[T] {
 		})
 }
 
+// FlatMap returns an Iterator emitting the 0 or more values for each value emitted by the given
+// Iterator, as produced by the given function.
 func FlatMap[T, R any](f func(T) []R, iter Iterator[T]) Iterator[R] {
 	return Make(
 		func(out chan<- R, stopChan <-chan interface{}) {
@@ -48,6 +54,8 @@ func FlatMap[T, R any](f func(T) []R, iter Iterator[T]) Iterator[R] {
 		})
 }
 
+// Chunk returns an Iterator emitting slices with the given length of values emitted by the given
+// Iterator.
 func Chunk[T any](n int, iter Iterator[T]) Iterator[[]T] {
 	return Make(
 		func(out chan<- []T, stopChan <-chan interface{}) {
