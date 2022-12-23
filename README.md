@@ -68,11 +68,6 @@ if i can see a size, I can preallocate in collection.
 
 ranges only ascend now. they should be able to descend.
 
-#### reverse slices
-
-90% of the time i want a reverse range i really just want to traverse a slice backwards. so just
-offer that.
-
 ## isn't this slow?
 
 probably? i wouldn't try to write a blas implementation with it. but for typical webby

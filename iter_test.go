@@ -26,6 +26,25 @@ func TestSlice(t *testing.T) {
 	}
 }
 
+func TestSliceReverse(t *testing.T) {
+	xs := []int{1, 2, 3, 4, 5}
+
+	want := []int{5, 4, 3, 2, 1}
+
+	iter := SliceReversed(xs)
+
+	out := []int{}
+
+	defer iter.Close()
+	for x := range iter.Each {
+		out = append(out, x)
+	}
+
+	if !reflect.DeepEqual(want, out) {
+		t.Errorf("TestSliceReversed: out = %v, want %v", out, want)
+	}
+}
+
 func TestConsumeSlice(t *testing.T) {
 	xs := []int{1, 2, 3, 4, 5}
 

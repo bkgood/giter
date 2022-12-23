@@ -89,6 +89,22 @@ func Slice[T any](xs []T) (i Iterator[T]) {
 		})
 }
 
+// SliceReversed creates an interator that emits the values of a given slice in reverse.
+//
+// Same caveats apply as in Slice.
+func SliceReversed[T any](xs []T) (i Iterator[T]) {
+	return Make(
+		func(values chan<- T, stopChan <-chan interface{}) {
+			for i, _ := range xs {
+				select {
+				case values <- xs[len(xs)-i-1]:
+				case <-stopChan:
+					return
+				}
+			}
+		})
+}
+
 // NeverShrink can be used to indicate to ConsumeSlice to never shrink the slice it's consuming.
 func NeverShrink(_, _ int) bool { return false }
 
