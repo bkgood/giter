@@ -19,12 +19,19 @@ package giter
 // An iterator must be closed, otherwise any resources held by the iterator's producer will not be
 // released. It may be closed repeatedly without ill effect.
 //
+// Note that all functions receiving an Iterator in this package take responsibility for closing the
+// iterators they receive.
+//
 // Thus a trivial iterator use that consumes all elements and discards them might look like:
 //
 //	iter := ...
 //	defer iter.Close()
 //	for _ := range iter.Each {
 //	}
+//
+// Higher-level interfaces on Iterator consumption are expected to manage closing the Iterator when
+// appropriate; callers that simply pass an Iterator into an Iterator consumer should not be
+// required to manually call Close.
 type Iterator[T any] struct {
 	Each <-chan T
 
