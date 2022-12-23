@@ -2,6 +2,7 @@ package giter
 
 import (
 	"reflect"
+	"sort"
 	"testing"
 )
 
@@ -53,6 +54,53 @@ func TestZipp(t *testing.T) {
 
 	if !reflect.DeepEqual(out, want) {
 		t.Errorf("TestZip: Zip(odds, evens) = %v, want = %v", out, want)
+	}
+}
+
+func slices[T any](slices ...[]T) []Iterator[T] {
+	// XXX might add this to the api, it's nice
+	return ToSlice(Map(func(xs []T) Iterator[T] { return Slice(xs) }, Slice(slices)))
+}
+
+func contains[T comparable](xs []T, x T) bool {
+	// how does this exist
+	for _, y := range xs {
+		if y == x {
+			return true
+		}
+	}
+
+	return false
+}
+
+func TestMerge(t *testing.T) {
+	in := [][]int{
+		[]int{1, 2},
+		[]int{3, 4, 5},
+	}
+
+	want := []int{1, 2, 3, 4, 5}
+
+	out := ToSlice(Merge(slices(in...)...))
+
+	sort.Ints(out)
+
+	if !reflect.DeepEqual(out, want) {
+		t.Errorf("TestMerge: Merge({1,2}, {3,4,5}) (unordered) = %v, want = %v", out, want)
+	}
+
+	// vaguely verify that closing doesn't bug out.
+	// XXX maybe there is some decent way to make sure no goroutines that we spawned linger
+	// after the Close()? that doesn't involve getting super invasive.
+	again := Merge(slices(in...)...)
+
+	oneOut := <-again.Each
+	again.Close()
+
+	if !contains(want, oneOut) {
+		t.Errorf(
+			"TestMerge: Merge({1,2}, {3,4,5}) one entry = %v, want one of = %v",
+			oneOut, want)
 	}
 }
 

@@ -38,11 +38,55 @@ func Zip[T any](iters ...Iterator[T]) Iterator[T] {
 		})
 }
 
-// undefined output order
+// Merge returns an iterator emitting all the values of the given iterators
+//
+// The output order is undefined.
 func Merge[T any](iters ...Iterator[T]) Iterator[T] {
 	return Make(
 		func(out chan<- T, stopChan <-chan interface{}) {
-			// TODO
+			// no way to mux reading from n channels, so...
+
+			// we launch 0..len(iters) goroutine, each watches a stop channel to know
+			// when to bail out
+			stops := make([]chan interface{}, len(iters))
+
+			// after we spawn our goroutines, we wait to see len(iters) messages on done
+			done := make(chan interface{})
+
+			for i := range iters {
+				go func(iter Iterator[T], stop <-chan interface{}) {
+					defer iter.Close()
+
+					for {
+						select {
+						case x, ok := <-iter.Each:
+							if !ok {
+								done <- nil
+								return
+							}
+							out <- x
+						case <-stop:
+							return
+						}
+					}
+				}(iters[i], stops[i])
+			}
+
+			waiting := len(iters)
+			for {
+				select {
+				case <-done:
+					waiting--
+
+					if waiting == 0 {
+						return
+					}
+				case <-stopChan:
+					for _, stop := range stops {
+						stop <- nil
+					}
+				}
+			}
 		})
 }
 
