@@ -80,10 +80,12 @@ func Last[T any](iter Iterator[T]) *T {
 
 // i should choose one of these :/
 
+// Some returns true if some value emitted by a given Iterator matches a given predicate.
 func Some[T any](pred func(T) bool, iter Iterator[T]) bool {
 	return Any(pred, iter)
 }
 
+// Has returns true if some value emitted by a given Iterator matches a given predicate.
 func Has[T any](pred func(T) bool, iter Iterator[T]) bool {
 	return Any(pred, iter)
 }
