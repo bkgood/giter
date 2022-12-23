@@ -50,6 +50,8 @@ func Concat[T any](iters ...Iterator[T]) Iterator[T] {
 	return Make(
 		func(out chan<- T, stopChan <-chan interface{}) {
 			for _, iter := range iters {
+				// XXX is this bugged? is it always closing the final struct pointed
+				// to by iter?
 				defer iter.Close()
 			}
 
