@@ -176,6 +176,7 @@ func MapKeys[K comparable, V any](m map[K]V) (i Iterator[K]) {
 		})
 }
 
+// MapKeys returns an Iterator that emits the values of a given map.
 func MapValues[K comparable, V any](m map[K]V) (i Iterator[V]) {
 	return Make(
 		func(values chan<- V, stopChan <-chan interface{}) {
@@ -189,11 +190,18 @@ func MapValues[K comparable, V any](m map[K]V) (i Iterator[V]) {
 		})
 }
 
+// KVPair holds the individual key-value pairs that represent a map.
+//
+// They can be generated from a given map with MapPairs, or a map can be created from them via
+// Collect and MapCollector, or ToMap.
 type KVPair[K comparable, V any] struct {
 	Key   K
 	Value V
 }
 
+// MapPairs returns an Iterator emitting the key-value pairs contained in a map.
+//
+// Modifying the passed map before the Iterator is closed may cause unpredictable results.
 func MapPairs[K comparable, V any](m map[K]V) (i Iterator[KVPair[K, V]]) {
 	return Make(
 		func(keys chan<- KVPair[K, V], stopChan <-chan interface{}) {
@@ -208,6 +216,10 @@ func MapPairs[K comparable, V any](m map[K]V) (i Iterator[KVPair[K, V]]) {
 		})
 }
 
+// One returns an Iterator emitting a single value.
+//
+// Particularly useful for calling a function that receives an Iterator and one only wants to pass
+// a single value.
 func One[V any](x V) Iterator[V] {
 	return Make(
 		func(values chan<- V, stopChan <-chan interface{}) {
