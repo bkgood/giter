@@ -55,7 +55,7 @@ func (iter *Iterator[T]) Close() {
 //
 // The resulting iterator will produce values in the order that they are produced by the passed
 // implementation function, in the order they were produced in.
-func Make[T any](impl func(chan<- T, <-chan interface{})) (i Iterator[T]) {
+func Make[T any](impl func(values chan<- T, stop <-chan interface{})) (i Iterator[T]) {
 	values := make(chan T)
 
 	stopChan := make(chan interface{})
