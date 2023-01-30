@@ -30,7 +30,7 @@ func Range[T int | int32 | int64 | float32 | float64](from, until T) Iterator[T]
 		})
 }
 
-// Range returns an iterator emitting numeric values over a given range with
+// RangeBy returns an iterator emitting numeric values over a given range with
 // a given step.
 //
 // The given range is half-open, inclusive on the left and exclusive on the right.

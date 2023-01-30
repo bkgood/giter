@@ -183,7 +183,7 @@ func MapKeys[K comparable, V any](m map[K]V) (i Iterator[K]) {
 		})
 }
 
-// MapKeys returns an Iterator that emits the values of a given map.
+// MapValues returns an Iterator that emits the values of a given map.
 func MapValues[K comparable, V any](m map[K]V) (i Iterator[V]) {
 	return Make(
 		func(values chan<- V, stopChan <-chan interface{}) {
